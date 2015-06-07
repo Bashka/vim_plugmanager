@@ -1,5 +1,5 @@
 " Date Create: 2015-03-05 11:36:30
-" Last Change: 2015-03-15 16:33:52
+" Last Change: 2015-06-07 20:25:51
 " Author: Artur Sh. Mamedbekov (Artur-Mamedbekov@yandex.ru)
 " License: GNU GPL v3 (http://www.gnu.org/copyleft/gpl.html)
 
@@ -28,23 +28,10 @@ call s:screen.map('n', 'dd', 'delete')
 
 function! s:screen.install() " {{{
   let l:level = g:vim_lib#sys#Autoload#currentLevel
-  " Выбор репозитория. {{{
-  let l:repositories = ['github.com'] " Массив поддерживаемых репозиториев.
-  let l:i = 0
-  for l:repository in l:repositories
-    call s:System.echo(l:i . '. ' . l:repository)
-    let l:i += 1
-  endfor
-  let l:i = s:System.read('Select repository: ')
-  if l:i != ''
-    let l:repository = l:repositories[l:i]
-  else
-    return 0
-  endif
-  " }}}
   let l:name = s:System.read('Enter address of the plugin github: ')
   if l:name != ''
-    call vim_plugmanager#install(l:level, l:name, l:repository)
+    call vim_plugmanager#install(l:level, l:name)
+    call vim_plugmanager#_enableInstalledPlugins(l:level)
     call self.redraw()
   endif
 endfunction " }}}
@@ -55,7 +42,7 @@ function! s:screen.delete() " {{{
   while l:n
     let l:line = s:Content.line(l:n)
     if l:line =~ '^"'
-      let l:level = strpart(l:line, 2, len(l:line) - 4) " Удаление коментария из пути уровня.
+      let l:level = strpart(l:line, 2) " Удаление коментария из пути уровня.
       break
     endif
     let l:n -= 1
